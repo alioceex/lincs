@@ -1,2 +1,2 @@
-# lincs-node
-LINCS L1000 data download and visualization 
+# LINCS L1000 gene expression profiles
+Data download and visualization 
