@@ -1,2 +1,2 @@
-# lincs
-LINCS L1000 Data 
+# lincs-node
+LINCS L1000 data download and visualization 
