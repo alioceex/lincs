@@ -1,4 +1,4 @@
-# lincs-project
+# Frontend
 
 > Data visualization and summary
 
