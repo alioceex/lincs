@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <h1><span> <img src="../assets/logo.png" style="width: 38px; height: 38px;"></span> {{ msg }}</h1>
+    <h1><span> <img src="../assets/img/logo.png" style="width: 38px; height: 38px;"></span> {{ msg }}</h1>
     <h5>gene expression profiles</h5>
     <br>
 
@@ -85,7 +85,7 @@
                     </tr>
                     <tr class="spinner">
                         <td colspan="3" class="text-center">
-                          <img src="../assets/spinner.gif" style="width: 38px; height: 38px;">
+                          <img src="../assets/img/spinner.gif" style="width: 38px; height: 38px;">
                         </td>
                     </tr>
                   </tbody>
