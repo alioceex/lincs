@@ -3,4 +3,4 @@ Data download and visualization
 
 ## Demo
 
-![alt tag](https://github.com/alioceex/lincs/raw/master/assets/src/lincs.png)
+![LINCS L1000](https://github.com/alioceex/lincs/blob/master/assets/src/assets/img/lincs.png)
