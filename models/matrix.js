@@ -19,4 +19,4 @@ const matrixSchema = new Schema({
   "vector" : Array
 });
 
-module.exports = mongoose.model('Matrix', matrixSchema, 'data')
+module.exports = mongoose.model('Matrix', matrixSchema, 'matrix')

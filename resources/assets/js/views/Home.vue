@@ -105,9 +105,14 @@
             <div class="foot col-sm-12" v-show="show">
                   <div class="col-sm-6"> Showing: {{count}}  of {{model.total}} profile(s)</div>
                   <div class="col-sm-6">
-                    <a class="label label-success bg-danger pull-right download" :href="`/api/download/${selected}`">
+                    <a class="label label-success bg-danger pull-right download" :href="`/api/download/${selected}`" v-if="selected.length">
                       Download
                       <span v-if="selected.length">{{selected.length}}</span>
+                    </a>
+
+                    <a class="label label-success bg-danger pull-right download" v-if="!selected.length">
+                      Download
+                      
                     </a>
                   </div>
             </div>

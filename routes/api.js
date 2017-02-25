@@ -81,7 +81,7 @@ router.get('/download/:ids', (req, res, next) => {
 
   let filename = 'results.zip'
   res.setHeader('Content-disposition', 'attachment; filename=' + filename)
-  res.setHeader('content-type', 'application/zip, application/octet-stream')
+  res.setHeader('content-type', 'application/zip')
 
   let archive = archiver('zip', {
       store: true
@@ -116,20 +116,50 @@ router.get('/download/:ids', (req, res, next) => {
     let csvStream = csv.createWriteStream({
       headers: ['gene_symbols', symbols],
       objectMode: true,
-      quote: ' ',
-      transform: function (row) {
-        return row
-      }
+      quote: ' '
+    })
+
+    let meta = [
+      "id",
+      "CL_Name",
+      "SM_Center_Compound_ID",
+      "SM_Dose",
+      "SM_Dose_Unit",
+      "SM_LINCS_ID",
+      "SM_Name",
+      "SM_Pert_Type",
+      "SM_Time",
+      "SM_Time_Unit",
+      "det_plate",
+      "det_well"
+    ]
+
+    let csvStreamMeta = csv.createWriteStream({
+      headers: meta,
+      objectMode: true
     })
 
     results[1].forEach( (r) => {
       csvStream.write([
         [r.id], [r.vector]
       ])
+      csvStreamMeta.write([
+        [r.id], [r.CL_Name], [r.SM_Center_Compound_ID], [r.SM_Dose], [r.SM_Dose_Unit],
+        [r.SM_LINCS_ID], [r.SM_Name], [r.SM_Pert_Type], [r.SM_Time], [r.SM_Time_Unit],
+        [r.det_plate], [r.det_well]
+      ])
     })
     csvStream.end()
+    csvStreamMeta.end()
 
+    // results[1].forEach( (r) => {
+    //   csvStream.write([
+    //     [r.id], [r.vector]
+    //   ])
+    // })
+    csvStream.end()
     archive.append(csvStream, { name: 'matrix.csv' })
+    archive.append(csvStreamMeta, { name: 'metadata.csv' })
     archive.finalize()
     archive.pipe(res)
   })
