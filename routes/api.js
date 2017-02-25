@@ -3,6 +3,7 @@ const router = express.Router()
 const Matrix = require('../models/matrix')
 const Metadata = require('../models/metadata')
 const async = require('async')
+const csv = require("fast-csv")
 
 router.use(function(req, res, next) {
     console.log('Loading...');
@@ -13,19 +14,13 @@ router.get('/tags', (req, res, next) => {
 
   let queries = []
   queries.push(function (cb) {
-    Metadata.distinct('CL_Name', (err, docs) => {
-        if (err) {
-          throw cb(err)
-        }
+    Metadata.distinct('CL_Name').then( (docs) => {
         cb(null, docs)
     });
   })
 
   queries.push(function (cb) {
-    Metadata.distinct('SM_Name', (err, docs) => {
-        if (err) {
-          throw cb(err)
-        }
+    Metadata.distinct('SM_Name').then( (docs) => {
         cb(null, docs)
     });
   })
@@ -66,10 +61,7 @@ router.post('/search', (req, res, next) => {
     limit: data.limit
   }
 
-  Metadata.paginate({$or:fields}, options , (err, model) => {
-    if (err)
-      throw err
-
+  Metadata.paginate({$or:fields}, options).then( (model) => {
     let data = {
       model
     }
@@ -84,14 +76,31 @@ router.post('/search', (req, res, next) => {
 
 router.post('/download', (req, res, next) => {
 
-  let data = req.body
+  let filename = 'matrix.csv'
+  res.setHeader('Content-disposition', 'attachment; filename=' + filename)
+  res.setHeader('content-type', 'text/csv')
 
-  Matrix.find({
-    id: { $in: data } },
-    {id: 1, vector: 1}, (err, data) => {
-
-    res.json(data)
+  let csvStream = csv.createWriteStream({
+      headers: true,
+      objectMode: true,
+      transform: function (row) {
+        return row
+      }
   })
+
+  let data = req.body
+  Matrix.find({id: { $in: data }}, {id: 1, vector: 1}).then( (results) => {
+
+    results.forEach( (r) => {
+      csvStream.write(
+        r.vector
+      )
+    })
+    csvStream.end()
+    csvStream.pipe(res)
+
+  })
+
 
 })
 
