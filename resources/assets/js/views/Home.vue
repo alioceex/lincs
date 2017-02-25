@@ -105,7 +105,7 @@
             <div class="foot col-sm-12" v-show="show">
                   <div class="col-sm-6"> Showing: {{count}}  of {{model.total}} profile(s)</div>
                   <div class="col-sm-6">
-                    <a class="label label-success bg-danger pull-right download" @click.prevent="download">
+                    <a class="label label-success bg-danger pull-right download" :href="`/api/download/${selected}`">
                       Download
                       <span v-if="selected.length">{{selected.length}}</span>
                     </a>
@@ -199,7 +199,7 @@ export default {
         limit: vm.model.limit,
         page: vm.model.page
       }
-      axios.post('http://localhost:3000/api/search', params)
+      axios.post('/api/search', params)
         .then(function (response) {
           let model = response.data.model
           let docs = model.docs
@@ -233,13 +233,14 @@ export default {
       }
 
       vm.count = 0
+      vm.selected = []
 
       let params = {
         values: vm.value,
         limit: 50,
         page: 1
       }
-      axios.post('http://localhost:3000/api/search', params)
+      axios.post('/api/search', params)
         .then(function (response) {
           vm.model = response.data.model
           vm.count = 50
@@ -262,15 +263,6 @@ export default {
           total: 0
         }
       }
-    },
-    download () {
-      axios.post('http://localhost:3000/api/download', this.selected)
-        .then(function (response) {
-          console.log('Downloaded!')
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
     }
   },
   components: { Multiselect }
@@ -371,7 +363,5 @@ h1 span img{ margin: -10px 0 0 0;}
 .download{
   padding: 4px 8px;
 }
-
-
 
 </style>

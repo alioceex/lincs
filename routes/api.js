@@ -1,9 +1,14 @@
+"use strict"
 const express = require('express')
 const router = express.Router()
 const Matrix = require('../models/matrix')
 const Metadata = require('../models/metadata')
+const Annotation = require('../models/annotation')
 const async = require('async')
 const csv = require("fast-csv")
+const helper = require('./helper')
+const fs = require('fs')
+const archiver = require('archiver')
 
 router.use(function(req, res, next) {
     console.log('Loading...');
@@ -16,13 +21,13 @@ router.get('/tags', (req, res, next) => {
   queries.push(function (cb) {
     Metadata.distinct('CL_Name').then( (docs) => {
         cb(null, docs)
-    });
+    })
   })
 
   queries.push(function (cb) {
     Metadata.distinct('SM_Name').then( (docs) => {
         cb(null, docs)
-    });
+    })
   })
 
   async.parallel(queries, function(err, docs) {
@@ -67,40 +72,67 @@ router.post('/search', (req, res, next) => {
     }
     res.json(data)
   })
-
-
 })
 
 
 // Download
 
-router.post('/download', (req, res, next) => {
+router.get('/download/:ids', (req, res, next) => {
 
-  let filename = 'matrix.csv'
+  let filename = 'results.zip'
   res.setHeader('Content-disposition', 'attachment; filename=' + filename)
-  res.setHeader('content-type', 'text/csv')
+  res.setHeader('content-type', 'application/zip, application/octet-stream')
 
-  let csvStream = csv.createWriteStream({
-      headers: true,
+  let archive = archiver('zip', {
+      store: true
+  })
+
+  archive.on('error', function(err) {
+    throw err
+  })
+
+  let data = req.params.ids.split(',')
+
+  let queries = []
+  queries.push(function (cb) {
+    Annotation.find({}, {_id: 0, pr_gene_symbol: 1}).then( (results) => {
+        cb(null, results)
+    })
+  })
+
+  queries.push(function (cb) {
+    Matrix.find({id: { $in: data }}, {_id: 0}).then( (results) => {
+        cb(null, results)
+    })
+  })
+
+  async.parallel(queries, function(err, results) {
+    if (err) {
+        throw err
+    }
+
+    let symbols = results[0].map(function(s) { return s.pr_gene_symbol })
+
+    let csvStream = csv.createWriteStream({
+      headers: ['gene_symbols', symbols],
       objectMode: true,
+      quote: ' ',
       transform: function (row) {
         return row
       }
-  })
+    })
 
-  let data = req.body
-  Matrix.find({id: { $in: data }}, {id: 1, vector: 1}).then( (results) => {
-
-    results.forEach( (r) => {
-      csvStream.write(
-        r.vector
-      )
+    results[1].forEach( (r) => {
+      csvStream.write([
+        [r.id], [r.vector]
+      ])
     })
     csvStream.end()
-    csvStream.pipe(res)
 
+    archive.append(csvStream, { name: 'matrix.csv' })
+    archive.finalize()
+    archive.pipe(res)
   })
-
 
 })
 

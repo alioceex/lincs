@@ -42,6 +42,10 @@ app.get('/', function(req, res, next) {
   res.render('index', { title: 'Lincs Project' })
 })
 
+app.get('/test', function(req, res, next) {
+  res.render('test', { title: 'Lincs Project' })
+})
+
 // Download Routes
 const api = require('./routes/api')
 app.use('/api', api)

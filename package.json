@@ -9,8 +9,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "webpack": "webpack --hide-modules",
-    "dev": "webpack --hide-modules --watch"
+    "webpack": "export NODE_ENV=development && webpack --hide-modules",
+    "dev": "export NODE_ENV=development && webpack --hide-modules --watch",
+    "production": "export NODE_ENV=production && webpack --hide-modules"
   },
   "keywords": [
     "lincs"
@@ -18,10 +19,12 @@
   "author": "Aliyu Musa",
   "license": "ISC",
   "dependencies": {
+    "archiver": "^1.3.0",
     "async": "^2.1.5",
     "axios": "^0.15.3",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.16.1",
+    "content-disposition": "^0.5.2",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.1",
     "css-loader": "^0.26.2",
@@ -42,6 +45,7 @@
     "vue": "^2.1.10",
     "vue-loader": "^11.1.3",
     "vue-multiselect": "^2.0.0-beta.13",
+    "vue-resource": "^1.2.0",
     "vue-router": "^2.2.1",
     "vue-template-compiler": "^2.1.10",
     "vuex": "^2.1.3",
