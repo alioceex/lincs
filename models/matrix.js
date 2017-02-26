@@ -4,7 +4,7 @@ const config = require('../config/database')
 const Schema = mongoose.Schema;
 
 const matrixSchema = new Schema({
-  "CL_Name " : String,
+  "CL_Name" : String,
   "SM_Center_Compound_ID" : String,
   "SM_Dose" : String,
   "SM_Dose_Unit" : String,

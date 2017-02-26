@@ -9,6 +9,7 @@ const csv = require("fast-csv")
 const helper = require('./helper')
 const fs = require('fs')
 const archiver = require('archiver')
+const _ = require('underscore')
 
 router.use(function(req, res, next) {
     console.log('Loading...');
@@ -111,10 +112,14 @@ router.get('/download/:ids', (req, res, next) => {
         throw err
     }
 
-    let symbols = results[0].map(function(s) { return s.pr_gene_symbol })
-
     let csvStream = csv.createWriteStream({
-      headers: ['gene_symbols', symbols],
+      headers: true,
+      objectMode: true,
+      quote: ' '
+    })
+
+    let csvStreamMeta = csv.createWriteStream({
+      headers: true,
       objectMode: true,
       quote: ' '
     })
@@ -133,37 +138,39 @@ router.get('/download/:ids', (req, res, next) => {
       "det_plate",
       "det_well"
     ]
+    let headers = ['gene_symbols',data]
 
-    let csvStreamMeta = csv.createWriteStream({
-      headers: meta,
-      objectMode: true
-    })
+    csvStream.write(headers)
+    csvStreamMeta.write(meta)
 
+    let symbols = results[0].map(function(s) { return s.pr_gene_symbol })
+
+    let matrixData = []
+    matrixData.push(symbols)
     results[1].forEach( (r) => {
-      csvStream.write([
-        [r.id], [r.vector]
-      ])
+      matrixData.push(r.vector)
+
       csvStreamMeta.write([
         [r.id], [r.CL_Name], [r.SM_Center_Compound_ID], [r.SM_Dose], [r.SM_Dose_Unit],
         [r.SM_LINCS_ID], [r.SM_Name], [r.SM_Pert_Type], [r.SM_Time], [r.SM_Time_Unit],
         [r.det_plate], [r.det_well]
       ])
     })
+
+    let matrix = _.zip.apply(_,matrixData)
+
+    matrix.forEach( (r) => {
+      csvStream.write(r)
+    })
+
     csvStream.end()
     csvStreamMeta.end()
 
-    // results[1].forEach( (r) => {
-    //   csvStream.write([
-    //     [r.id], [r.vector]
-    //   ])
-    // })
-    csvStream.end()
     archive.append(csvStream, { name: 'matrix.csv' })
     archive.append(csvStreamMeta, { name: 'metadata.csv' })
     archive.finalize()
     archive.pipe(res)
   })
-
 })
 
 module.exports = router

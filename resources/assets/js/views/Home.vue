@@ -43,7 +43,7 @@
           <div class="clearfix"> </div>
 
           <fieldset></fieldset>
-          <div class="table-head" v-show="show">
+          <div class="table-responsive table-head" v-show="show">
           <table class="table" style="width: 740px;" >
             <thead>
                 <tr>
@@ -66,7 +66,7 @@
             </thead>
           </table>
         </div>
-          <div id="scroll" class="table-responsive" v-show="show" @scroll="onScroll">
+        <div id="scroll" class="table-responsive" v-show="show" @scroll="onScroll">
             <table class="table" style="width: 740px;" >
 
                   <tbody>
@@ -112,7 +112,6 @@
 
                     <a class="label label-success bg-danger pull-right download" v-if="!selected.length">
                       Download
-                      
                     </a>
                   </div>
             </div>
