@@ -55,16 +55,21 @@ router.post('/search', (req, res, next) => {
 
   let data = req.body
 
+  let sorted = {}
   let fields = []
   data.values.forEach( (d, i) => {
     let values = {}
+
     values[d.name] = d.tag
     fields.push(values)
+
+    sorted[d.name] = 1
   })
 
   let options = {
     page: data.page,
-    limit: data.limit
+    limit: data.limit,
+    sort: sorted
   }
 
   Metadata.paginate({$or:fields}, options).then( (model) => {
