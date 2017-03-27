@@ -31,6 +31,18 @@ router.get('/tags', (req, res, next) => {
     })
   })
 
+  queries.push(function (cb) {
+    Metadata.distinct('SM_Dose').then( (docs) => {
+        cb(null, docs)
+    })
+  })
+
+  queries.push(function (cb) {
+    Metadata.distinct('SM_Time').then( (docs) => {
+        cb(null, docs)
+    })
+  })
+
   async.parallel(queries, function(err, docs) {
     if (err) {
         throw err
@@ -46,7 +58,19 @@ router.get('/tags', (req, res, next) => {
        obj2[i] = { name: 'SM_Name', tag}
     })
 
-    res.json(obj1.concat(obj2))
+    var obj3 = [];
+    docs[2].forEach(function(tag, i){
+       tag = tag + 'um'
+       obj3[i] = { name: 'SM_Dose', tag}
+    })
+
+    var obj4 = [];
+    docs[3].forEach(function(tag, i){
+       tag = tag + 'h'
+       obj4[i] = { name: 'SM_Time', tag}
+    })
+
+    res.json(obj1.concat(obj2, obj3, obj4))
   })
 
 })
@@ -59,7 +83,12 @@ router.post('/search', (req, res, next) => {
   let fields = []
   data.values.forEach( (d, i) => {
     let values = {}
-
+    if(d.name == 'SM_Dose'){
+        d.tag = d.tag.substring(0, d.tag.length - 2)
+    }
+    if(d.name == 'SM_Time'){
+        d.tag = d.tag.substring(0, d.tag.length - 1)
+    }
     values[d.name] = d.tag
     fields.push(values)
 

@@ -1,3 +1,3 @@
 module.exports = {
-  database: 'mongodb://localhost:27017/lincs'
+  database: 'mongodb://127.0.0.1:27017/lincs'
 }

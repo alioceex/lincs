@@ -85,7 +85,7 @@
                         <td width="2%" class="text-center"><input class="custom" type="checkbox" v-model="selected" :value="item.id"></td>
                     </tr>
                     <tr class="spinner">
-                        <td colspan="3" class="text-center">
+                        <td colspan="5" class="text-center">
                           <img src="/img/spinner.gif" style="width: 38px; height: 38px;">
                         </td>
                     </tr>
@@ -140,7 +140,7 @@ export default {
         page: 1,
         total: 0
       },
-      count: 50,
+      count: 0,
       loading: false
     }
   },
@@ -201,8 +201,9 @@ export default {
       let params = {
         values: vm.value,
         limit: vm.model.limit,
-        page: vm.model.page
+        page: vm.model.page + 1
       }
+
       axios.post('/api/search', params)
         .then(function (response) {
           let model = response.data.model
@@ -211,7 +212,7 @@ export default {
           vm.model.docs = vm.model.docs.concat(docs)
           vm.model.limit = model.limit
           vm.model.page++
-          vm.count += vm.model.limit
+          vm.count += docs.length
           vm.model.total = model.total
           vm.loading = false
         })
@@ -247,7 +248,7 @@ export default {
       axios.post('/api/search', params)
         .then(function (response) {
           vm.model = response.data.model
-          vm.count = 50
+          vm.count += response.data.model.docs.length
         })
         .catch(function (error) {
           console.log(error)
