@@ -4,18 +4,28 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules",
-    "watch": "NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules",
-    "hot": "NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot",
+    "dev": "node_modules/webpack/bin/webpack.js --progress --hide-modules",
+    "watch": "node_modules/webpack/bin/webpack.js --watch --progress --hide-modules",
+    "hot": "node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot",
     "production": "NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules"
   },
   "dependencies": {
     "body-parser": "~1.16.0",
     "cookie-parser": "~1.4.3",
+    "css-loader": "^0.27.3",
     "debug": "~2.6.0",
     "express": "~4.14.1",
     "jade": "~1.11.0",
     "morgan": "~1.7.0",
-    "serve-favicon": "~2.3.2"
+    "node-sass": "^4.5.1",
+    "node-sass-loader": "^0.1.7",
+    "sass-loader": "^6.0.3",
+    "serve-favicon": "~2.3.2",
+    "style-loader": "^0.16.0"
+  },
+  "devDependencies": {
+    "extract-text-webpack-plugin": "^2.1.0",
+    "node-sass": "^4.5.1",
+    "sass-loader": "^6.0.3"
   }
 }

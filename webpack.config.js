@@ -1,10 +1,15 @@
 var path = require('path');
 var webpack = require('webpack');
+var inPro = (process.env.NODE_ENV === 'production');
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 
 module.exports = {
   entry: {
-    app: './resources/assets/js/main.js',
+    app: [
+      './resources/assets/js/main.js',
+      './resources/assets/sass/main.sass',
+    ],
     vendor: ['vue', 'vue-router', 'vuex-router-sync', 'vuex', 'axios']
   },
   output: {
@@ -28,6 +33,13 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: "vue-loader"
+      },
+      {
+        test: /\.s[ac]ss$/,
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: ["css-loader", "sass-loader"]
+        })
       }
     ]
   },
@@ -35,12 +47,16 @@ module.exports = {
   plugins: [
     new webpack.optimize.CommonsChunkPlugin({
       names: ['vendor']
+    }),
+    new ExtractTextPlugin('[name].css'),
+    new webpack.LoaderOptionsPlugin({
+      minimize: inPro
     })
   ]
 
 };
 
-if(process.env.NODE_ENV === 'production'){
+if(inPro){
   module.exports.plugins.push(
     new webpack.optimize.UglifyJsPlugin({
       sourcemap: true,

@@ -274,7 +274,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="sass">
 /*.multiselect__tag {background: #84c65e !important;}
 .multiselect__tags {border-color: #2EBEB1 !important;}
 .multiselect__tag-icon:focus, .multiselect__tag-icon:hover {background: #83b267 !important;}
